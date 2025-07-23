@@ -1,13 +1,557 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Appointment Management Frontend</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AppointmentPro - מערכת ניהול תורים</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Heebo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.344.0/lucide.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <svg class="nav-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                <span class="nav-title" data-key="app.name">AppointmentPro</span>
+            </div>
+            
+            <div class="nav-menu" id="navMenu">
+                <button class="language-toggle" id="languageToggle">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="2" y1="12" x2="22" y2="12"></line>
+                        <path d="m6.93 6.93 10.14 10.14"></path>
+                        <path d="m6.93 17.07 10.14-10.14"></path>
+                    </svg>
+                    <span id="languageText">עב</span>
+                </button>
+                
+                <div class="nav-links" id="navLinks">
+                    <a href="#" class="nav-link active" data-page="home" data-key="nav.home">בית</a>
+                    <a href="#" class="nav-link" data-page="login" data-key="nav.login">התחברות</a>
+                </div>
+                
+                <div class="nav-links authenticated hidden" id="authNavLinks">
+                    <a href="#" class="nav-link" data-page="dashboard" data-key="nav.dashboard">לוח בקרה</a>
+                    <a href="#" class="nav-link" data-page="booking" data-key="nav.bookAppointment">קביעת תור</a>
+                    <a href="#" class="nav-link" data-page="hours" data-key="nav.businessHours">שעות פעילות</a>
+                    <button class="nav-link logout-btn" id="logoutBtn" data-key="nav.logout">התנתקות</button>
+                </div>
+            </div>
+            
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <svg class="menu-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+        <!-- Loading Screen -->
+        <div class="loading-screen" id="loadingScreen">
+            <div class="spinner"></div>
+        </div>
+
+        <!-- Home Page -->
+        <div class="page" id="homePage">
+            <div class="hero-section">
+                <div class="hero-content">
+                    <h1 class="hero-title">
+                        <span data-key="home.title">קבעו את התורים שלכם</span>
+                        <span class="hero-subtitle" data-key="home.subtitle">בקלות</span>
+                    </h1>
+                    <p class="hero-description" data-key="home.description">
+                        מערכת קביעת תורים מקצועית לעסקים ולקוחות. נהלו את לוח הזמנים שלכם, קבעו שירותים ואל תפספסו תור.
+                    </p>
+                    <div class="hero-buttons">
+                        <button class="btn btn-primary" data-page="login" data-key="home.getStarted">התחילו כאן</button>
+                        <button class="btn btn-secondary" data-page="hours" data-key="home.viewDemo">צפו בדמו</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="features-section">
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                        </div>
+                        <h3 class="feature-title" data-key="home.easyBooking">קביעת תורים קלה</h3>
+                        <p class="feature-description" data-key="home.easyBookingDesc">
+                            קביעת תורים פשוטה ואינטואיטיבית עם זמינות בזמן אמת.
+                        </p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon feature-icon-green">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12,6 12,12 16,14"></polyline>
+                            </svg>
+                        </div>
+                        <h3 class="feature-title" data-key="home.smartScheduling">תזמון חכם</h3>
+                        <p class="feature-description" data-key="home.smartSchedulingDesc">
+                            תזמון אוטומטי עם ניהול שעות פעילות וזמינות.
+                        </p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon feature-icon-purple">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                <polyline points="22,4 12,14.01 9,11.01"></polyline>
+                            </svg>
+                        </div>
+                        <h3 class="feature-title" data-key="home.reliableService">שירות אמין</h3>
+                        <p class="feature-description" data-key="home.reliableServiceDesc">
+                            אימות מאובטח וניהול תורים אמין.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Login/Register Page -->
+        <div class="page hidden" id="loginPage">
+            <div class="auth-container">
+                <div class="auth-card">
+                    <div class="auth-header">
+                        <div class="auth-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                        </div>
+                        <h2 class="auth-title" id="authTitle" data-key="auth.welcomeBack">ברוכים השבים</h2>
+                        <p class="auth-subtitle" id="authSubtitle" data-key="auth.signInToAccount">התחברו לחשבון שלכם</p>
+                    </div>
+
+                    <div class="error-message hidden" id="errorMessage">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="15" y1="9" x2="9" y2="15"></line>
+                            <line x1="9" y1="9" x2="15" y2="15"></line>
+                        </svg>
+                        <span id="errorText"></span>
+                    </div>
+
+                    <form class="auth-form" id="authForm">
+                        <div class="form-row hidden" id="nameFields">
+                            <div class="form-group">
+                                <label class="form-label" data-key="auth.firstName">שם פרטי</label>
+                                <input type="text" class="form-input" id="firstName" name="firstName">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" data-key="auth.lastName">שם משפחה</label>
+                                <input type="text" class="form-input" id="lastName" name="lastName">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" data-key="auth.email">כתובת אימייל</label>
+                            <div class="input-with-icon">
+                                <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                    <polyline points="22,6 12,13 2,6"></polyline>
+                                </svg>
+                                <input type="email" class="form-input" id="email" name="email" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" data-key="auth.password">סיסמה</label>
+                            <div class="input-with-icon">
+                                <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                    <circle cx="12" cy="16" r="1"></circle>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                </svg>
+                                <input type="password" class="form-input" id="password" name="password" required>
+                                <button type="button" class="password-toggle" id="passwordToggle">
+                                    <svg class="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="form-group hidden" id="roleField">
+                            <label class="form-label" data-key="auth.accountType">סוג חשבון</label>
+                            <select class="form-input" id="role" name="role">
+                                <option value="client" data-key="auth.client">לקוח</option>
+                                <option value="business" data-key="auth.business">בעל עסק</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group hidden" id="businessNameField">
+                            <label class="form-label" data-key="auth.businessName">שם העסק</label>
+                            <div class="input-with-icon">
+                                <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M3 21h18"></path>
+                                    <path d="M5 21V7l8-4v18"></path>
+                                    <path d="M19 21V11l-6-4"></path>
+                                </svg>
+                                <input type="text" class="form-input" id="businessName" name="businessName">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-full" id="authSubmitBtn">
+                            <span class="btn-text" data-key="auth.signIn">התחברות</span>
+                            <div class="btn-spinner hidden">
+                                <div class="spinner-small"></div>
+                                <span data-key="auth.signingIn">מתחבר...</span>
+                            </div>
+                        </button>
+                    </form>
+
+                    <div class="auth-switch">
+                        <p class="auth-switch-text">
+                            <span id="authSwitchQuestion" data-key="auth.noAccount">אין לכם חשבון?</span>
+                            <button class="auth-switch-btn" id="authSwitchBtn" data-key="auth.signUp">הרשמה</button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Business Hours Page -->
+        <div class="page hidden" id="hoursPage">
+            <div class="hours-container">
+                <div class="hours-card">
+                    <div class="hours-header">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12,6 12,12 16,14"></polyline>
+                        </svg>
+                        <div>
+                            <h2 class="hours-title" data-key="hours.title">שעות פעילות</h2>
+                            <p class="hours-subtitle" data-key="hours.subtitle">מתי אנחנו זמינים לתורים</p>
+                        </div>
+                    </div>
+
+                    <div class="hours-loading hidden" id="hoursLoading">
+                        <div class="spinner"></div>
+                        <span data-key="hours.loading">טוען שעות פעילות...</span>
+                    </div>
+
+                    <div class="hours-error hidden" id="hoursError">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="15" y1="9" x2="9" y2="15"></line>
+                            <line x1="9" y1="9" x2="15" y2="15"></line>
+                        </svg>
+                        <span data-key="hours.error">שגיאה בטעינת שעות הפעילות</span>
+                    </div>
+
+                    <div class="hours-content" id="hoursContent">
+                        <div class="hours-list" id="hoursList">
+                            <!-- Hours will be populated by JavaScript -->
+                        </div>
+
+                        <div class="hours-notes">
+                            <h3 class="notes-title" data-key="hours.notes">הערות חשובות:</h3>
+                            <ul class="notes-list">
+                                <li data-key="hours.timezone">כל הזמנים מוצגים באזור הזמן המקומי (אסיה/ירושלים)</li>
+                                <li data-key="hours.availability">משבצות התורים כפופות לזמינות</li>
+                                <li data-key="hours.holidays">שעות החגים עלולות להיות שונות מהלוח הרגיל</li>
+                                <li data-key="hours.bookAdvance">קבעו מראש כדי להבטיח את משבצת הזמן המועדפת עליכם</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Booking Flow Page -->
+        <div class="page hidden" id="bookingPage">
+            <div class="booking-container">
+                <!-- Progress Steps -->
+                <div class="booking-progress">
+                    <div class="progress-step active" data-step="1">
+                        <div class="step-number">1</div>
+                        <span class="step-label" data-key="booking.selectDate">בחירת תאריך</span>
+                    </div>
+                    <div class="progress-arrow">→</div>
+                    <div class="progress-step" data-step="2">
+                        <div class="step-number">2</div>
+                        <span class="step-label" data-key="booking.chooseTime">בחירת שעה</span>
+                    </div>
+                    <div class="progress-arrow">→</div>
+                    <div class="progress-step" data-step="3">
+                        <div class="step-number">3</div>
+                        <span class="step-label" data-key="booking.confirmBooking">אישור התור</span>
+                    </div>
+                    <div class="progress-arrow">→</div>
+                    <div class="progress-step" data-step="4">
+                        <div class="step-number">✓</div>
+                        <span class="step-label" data-key="booking.bookingComplete">התור נקבע</span>
+                    </div>
+                </div>
+
+                <!-- Step 1: Date Selection -->
+                <div class="booking-step active" id="bookingStep1">
+                    <div class="booking-card">
+                        <div class="booking-header">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                            <h2 class="booking-title" data-key="booking.selectDateTitle">בחרו תאריך</h2>
+                            <p class="booking-subtitle" data-key="booking.selectDateDesc">בחרו את התאריך המועדף עליכם לתור</p>
+                        </div>
+                        <div class="date-picker">
+                            <input type="date" class="date-input" id="dateInput">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Time Selection -->
+                <div class="booking-step hidden" id="bookingStep2">
+                    <div class="booking-card">
+                        <div class="booking-header">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12,6 12,12 16,14"></polyline>
+                            </svg>
+                            <h2 class="booking-title" data-key="booking.availableTimes">שעות זמינות</h2>
+                            <p class="booking-subtitle" id="selectedDateText"></p>
+                        </div>
+
+                        <div class="slots-loading hidden" id="slotsLoading">
+                            <div class="spinner"></div>
+                            <span data-key="booking.loadingTimes">טוען שעות זמינות...</span>
+                        </div>
+
+                        <div class="slots-error hidden" id="slotsError">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="15" y1="9" x2="9" y2="15"></line>
+                                <line x1="9" y1="9" x2="15" y2="15"></line>
+                            </svg>
+                            <span id="slotsErrorText"></span>
+                        </div>
+
+                        <div class="time-slots" id="timeSlots">
+                            <!-- Time slots will be populated by JavaScript -->
+                        </div>
+
+                        <div class="booking-actions">
+                            <button class="btn btn-secondary" id="backToDateBtn" data-key="booking.backToDate">חזרה לבחירת תאריך</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Confirmation -->
+                <div class="booking-step hidden" id="bookingStep3">
+                    <div class="booking-card">
+                        <div class="booking-header">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                            <h2 class="booking-title" data-key="booking.confirmTitle">אשרו את התור שלכם</h2>
+                            <p class="booking-subtitle" data-key="booking.reviewDetails">אנא בדקו את פרטי התור שלכם</p>
+                        </div>
+
+                        <div class="booking-summary">
+                            <div class="summary-item">
+                                <span class="summary-label" data-key="booking.date">תאריך:</span>
+                                <span class="summary-value" id="summaryDate"></span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-label" data-key="booking.time">שעה:</span>
+                                <span class="summary-value" id="summaryTime"></span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-label" data-key="booking.service">שירות:</span>
+                                <span class="summary-value" data-key="booking.demoService">שירות דמו</span>
+                            </div>
+                        </div>
+
+                        <div class="booking-error hidden" id="bookingError">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="15" y1="9" x2="9" y2="15"></line>
+                                <line x1="9" y1="9" x2="15" y2="15"></line>
+                            </svg>
+                            <span id="bookingErrorText"></span>
+                        </div>
+
+                        <div class="booking-actions">
+                            <button class="btn btn-secondary" id="backToTimeBtn" data-key="booking.backToTime">חזרה לבחירת שעה</button>
+                            <button class="btn btn-primary" id="confirmBookingBtn">
+                                <span class="btn-text" data-key="booking.confirmButton">אישור התור</span>
+                                <div class="btn-spinner hidden">
+                                    <div class="spinner-small"></div>
+                                    <span data-key="booking.booking">קובע תור...</span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4: Success -->
+                <div class="booking-step hidden" id="bookingStep4">
+                    <div class="booking-card success">
+                        <div class="booking-header">
+                            <div class="success-icon">
+                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                    <polyline points="22,4 12,14.01 9,11.01"></polyline>
+                                </svg>
+                            </div>
+                            <h2 class="booking-title" data-key="booking.confirmed">התור אושר!</h2>
+                            <p class="booking-subtitle" id="successMessage"></p>
+                        </div>
+
+                        <div class="success-info">
+                            <h3 class="info-title" data-key="booking.whatsNext">מה הלאה?</h3>
+                            <ul class="info-list">
+                                <li data-key="booking.confirmationEmail">תקבלו אימייל אישור בקרוב</li>
+                                <li data-key="booking.addToCalendar">הוסיפו את התור הזה ליומן שלכם</li>
+                                <li data-key="booking.manageDashboard">תוכלו לצפות ולנהל את התורים שלכם בלוח הבקרה</li>
+                            </ul>
+                        </div>
+
+                        <div class="booking-actions">
+                            <button class="btn btn-primary" id="bookAnotherBtn" data-key="booking.bookAnother">קביעת תור נוסף</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Page -->
+        <div class="page hidden" id="dashboardPage">
+            <div class="dashboard-container">
+                <div class="dashboard-header">
+                    <h1 class="dashboard-title">
+                        <span data-key="dashboard.welcomeBack">ברוכים השבים</span>, 
+                        <span id="userName">משתמש</span>!
+                    </h1>
+                    <p class="dashboard-subtitle" id="dashboardSubtitle" data-key="dashboard.manageAppointmentsDesc">
+                        צפו ונהלו את התורים הקרובים שלכם
+                    </p>
+                </div>
+
+                <div class="dashboard-tabs">
+                    <button class="tab-btn active" data-tab="overview" data-key="dashboard.overview">סקירה כללית</button>
+                    <button class="tab-btn" data-tab="appointments" data-key="nav.myAppointments">התורים שלי</button>
+                    <button class="tab-btn" data-tab="settings" data-key="nav.profile">פרופיל</button>
+                </div>
+
+                <div class="dashboard-content">
+                    <!-- Overview Tab -->
+                    <div class="tab-content active" id="overviewTab">
+                        <div class="stats-grid">
+                            <div class="stat-card stat-primary">
+                                <div class="stat-icon">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                                    </svg>
+                                </div>
+                                <div class="stat-content">
+                                    <p class="stat-label" data-key="dashboard.totalAppointments">סך התורים</p>
+                                    <p class="stat-value">24</p>
+                                </div>
+                            </div>
+
+                            <div class="stat-card stat-success">
+                                <div class="stat-icon">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <polyline points="12,6 12,12 16,14"></polyline>
+                                    </svg>
+                                </div>
+                                <div class="stat-content">
+                                    <p class="stat-label" data-key="dashboard.today">היום</p>
+                                    <p class="stat-value">3</p>
+                                </div>
+                            </div>
+
+                            <div class="stat-card stat-purple">
+                                <div class="stat-icon">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                                    </svg>
+                                </div>
+                                <div class="stat-content">
+                                    <p class="stat-label" data-key="dashboard.thisWeek">השבוע</p>
+                                    <p class="stat-value">12</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="recent-appointments">
+                            <h3 class="section-title" data-key="dashboard.recentAppointments">תורים אחרונים</h3>
+                            <div class="appointments-list" id="recentAppointmentsList">
+                                <!-- Recent appointments will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Appointments Tab -->
+                    <div class="tab-content hidden" id="appointmentsTab">
+                        <div class="appointments-header">
+                            <h3 class="section-title" data-key="nav.myAppointments">התורים שלי</h3>
+                            <button class="btn btn-primary" data-page="booking" data-key="dashboard.bookNew">קביעת תור חדש</button>
+                        </div>
+                        <div class="appointments-table">
+                            <div class="table-header">
+                                <div class="table-cell" data-key="booking.service">שירות</div>
+                                <div class="table-cell" data-key="common.dateTime">תאריך ושעה</div>
+                                <div class="table-cell" data-key="common.status">סטטוס</div>
+                                <div class="table-cell" data-key="common.actions">פעולות</div>
+                            </div>
+                            <div class="table-body" id="appointmentsTableBody">
+                                <!-- Appointments will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Settings Tab -->
+                    <div class="tab-content hidden" id="settingsTab">
+                        <h3 class="section-title" data-key="dashboard.profileSettings">הגדרות פרופיל</h3>
+                        <div class="settings-info">
+                            <p data-key="dashboard.settingsDesc">פאנל ההגדרות יכלול טפסים עבור:</p>
+                            <ul class="settings-list">
+                                <li data-key="dashboard.profileInfo">מידע פרופיל</li>
+                                <li data-key="dashboard.emailPrefs">העדפות אימייל</li>
+                                <li data-key="dashboard.notifications">הגדרות התראות</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="translations.js"></script>
+    <script src="app.js"></script>
+</body>
 </html>
