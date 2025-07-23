@@ -336,6 +336,7 @@ function updatePageTranslations() {
 
 // Initialize language on page load
 function initializeLanguage() {
+    console.log('Initializing language...');
     const savedLang = getCurrentLanguage();
     setLanguage(savedLang);
     
@@ -344,6 +345,7 @@ function initializeLanguage() {
     if (languageText) {
         languageText.textContent = savedLang === 'en' ? 'עב' : 'EN';
     }
+    console.log('Language initialized:', savedLang);
 }
 
 // Export for use in other files

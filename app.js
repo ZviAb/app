@@ -1,4 +1,24 @@
 // Main application JavaScript
+
+// Wait for DOM to be fully loaded
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded, initializing app...');
+    
+    // Check if translations are loaded
+    if (typeof translations === 'undefined') {
+        console.error('Translations not loaded');
+        return;
+    }
+    
+    // Initialize the app
+    try {
+        window.app = new AppointmentApp();
+        console.log('App initialized successfully');
+    } catch (error) {
+        console.error('Error initializing app:', error);
+    }
+});
+
 class AppointmentApp {
     constructor() {
         this.currentUser = null;
@@ -8,12 +28,19 @@ class AppointmentApp {
         this.selectedSlot = '';
         this.bookingStep = 1;
         
+        console.log('AppointmentApp constructor called');
         this.init();
     }
     
     init() {
+        console.log('Initializing app...');
+        
         // Initialize language
-        initializeLanguage();
+        if (typeof initializeLanguage === 'function') {
+            initializeLanguage();
+        } else {
+            console.error('initializeLanguage function not found');
+        }
         
         // Check authentication status
         this.checkAuthStatus();
@@ -26,18 +53,31 @@ class AppointmentApp {
         
         // Hide loading screen
         setTimeout(() => {
-            document.getElementById('loadingScreen').classList.add('hidden');
+            const loadingScreen = document.getElementById('loadingScreen');
+            if (loadingScreen) {
+                loadingScreen.classList.add('hidden');
+            }
         }, 500);
+        
+        console.log('App initialization complete');
     }
     
     bindEvents() {
+        console.log('Binding events...');
+        
         // Language toggle
-        document.getElementById('languageToggle').addEventListener('click', () => {
-            const currentLang = getCurrentLanguage();
-            const newLang = currentLang === 'en' ? 'he' : 'en';
-            setLanguage(newLang);
-            document.getElementById('languageText').textContent = newLang === 'en' ? 'עב' : 'EN';
-        });
+        const languageToggle = document.getElementById('languageToggle');
+        if (languageToggle) {
+            languageToggle.addEventListener('click', () => {
+                const currentLang = getCurrentLanguage();
+                const newLang = currentLang === 'en' ? 'he' : 'en';
+                setLanguage(newLang);
+                const languageText = document.getElementById('languageText');
+                if (languageText) {
+                    languageText.textContent = newLang === 'en' ? 'עב' : 'EN';
+                }
+            });
+        }
         
         // Navigation links
         document.querySelectorAll('[data-page]').forEach(link => {
@@ -49,14 +89,21 @@ class AppointmentApp {
         });
         
         // Mobile menu toggle
-        document.getElementById('mobileMenuBtn').addEventListener('click', () => {
-            document.getElementById('navMenu').classList.toggle('active');
-        });
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const navMenu = document.getElementById('navMenu');
+        if (mobileMenuBtn && navMenu) {
+            mobileMenuBtn.addEventListener('click', () => {
+                navMenu.classList.toggle('active');
+            });
+        }
         
         // Logout
-        document.getElementById('logoutBtn').addEventListener('click', () => {
-            this.logout();
-        });
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', () => {
+                this.logout();
+            });
+        }
         
         // Auth form events
         this.bindAuthEvents();
@@ -66,6 +113,8 @@ class AppointmentApp {
         
         // Dashboard events
         this.bindDashboardEvents();
+        
+        console.log('Events bound successfully');
     }
     
     bindAuthEvents() {
@@ -74,29 +123,41 @@ class AppointmentApp {
         const passwordToggle = document.getElementById('passwordToggle');
         const roleSelect = document.getElementById('role');
         
-        authForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            this.handleAuth();
-        });
+        if (authForm) {
+            authForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.handleAuth();
+            });
+        }
         
-        authSwitchBtn.addEventListener('click', () => {
-            this.toggleAuthMode();
-        });
+        if (authSwitchBtn) {
+            authSwitchBtn.addEventListener('click', () => {
+                this.toggleAuthMode();
+            });
+        }
         
-        passwordToggle.addEventListener('click', () => {
-            const passwordInput = document.getElementById('password');
-            const type = passwordInput.type === 'password' ? 'text' : 'password';
-            passwordInput.type = type;
-        });
+        if (passwordToggle) {
+            passwordToggle.addEventListener('click', () => {
+                const passwordInput = document.getElementById('password');
+                if (passwordInput) {
+                    const type = passwordInput.type === 'password' ? 'text' : 'password';
+                    passwordInput.type = type;
+                }
+            });
+        }
         
-        roleSelect.addEventListener('change', (e) => {
-            const businessNameField = document.getElementById('businessNameField');
-            if (e.target.value === 'business') {
-                businessNameField.classList.remove('hidden');
-            } else {
-                businessNameField.classList.add('hidden');
-            }
-        });
+        if (roleSelect) {
+            roleSelect.addEventListener('change', (e) => {
+                const businessNameField = document.getElementById('businessNameField');
+                if (businessNameField) {
+                    if (e.target.value === 'business') {
+                        businessNameField.classList.remove('hidden');
+                    } else {
+                        businessNameField.classList.add('hidden');
+                    }
+                }
+            });
+        }
     }
     
     bindBookingEvents() {
@@ -106,33 +167,43 @@ class AppointmentApp {
         const confirmBookingBtn = document.getElementById('confirmBookingBtn');
         const bookAnotherBtn = document.getElementById('bookAnotherBtn');
         
-        // Set minimum date to today
-        const today = new Date().toISOString().split('T')[0];
-        dateInput.min = today;
+        if (dateInput) {
+            // Set minimum date to today
+            const today = new Date().toISOString().split('T')[0];
+            dateInput.min = today;
         
-        dateInput.addEventListener('change', (e) => {
-            this.selectedDate = e.target.value;
-            if (this.selectedDate) {
-                this.loadAvailableSlots();
+            dateInput.addEventListener('change', (e) => {
+                this.selectedDate = e.target.value;
+                if (this.selectedDate) {
+                    this.loadAvailableSlots();
+                    this.setBookingStep(2);
+                }
+            });
+        }
+        
+        if (backToDateBtn) {
+            backToDateBtn.addEventListener('click', () => {
+                this.setBookingStep(1);
+            });
+        }
+        
+        if (backToTimeBtn) {
+            backToTimeBtn.addEventListener('click', () => {
                 this.setBookingStep(2);
-            }
-        });
+            });
+        }
         
-        backToDateBtn.addEventListener('click', () => {
-            this.setBookingStep(1);
-        });
+        if (confirmBookingBtn) {
+            confirmBookingBtn.addEventListener('click', () => {
+                this.bookAppointment();
+            });
+        }
         
-        backToTimeBtn.addEventListener('click', () => {
-            this.setBookingStep(2);
-        });
-        
-        confirmBookingBtn.addEventListener('click', () => {
-            this.bookAppointment();
-        });
-        
-        bookAnotherBtn.addEventListener('click', () => {
-            this.resetBooking();
-        });
+        if (bookAnotherBtn) {
+            bookAnotherBtn.addEventListener('click', () => {
+                this.resetBooking();
+            });
+        }
     }
     
     bindDashboardEvents() {
@@ -146,23 +217,28 @@ class AppointmentApp {
     }
     
     checkAuthStatus() {
+        console.log('Checking auth status...');
         const savedUser = localStorage.getItem('demo_user');
         if (savedUser) {
             try {
                 this.currentUser = JSON.parse(savedUser);
                 this.updateNavigation();
+                console.log('User found in localStorage:', this.currentUser);
             } catch (error) {
                 console.error('Error parsing saved user:', error);
                 localStorage.removeItem('demo_user');
             }
+        } else {
+            console.log('No saved user found');
         }
     }
     
     updateNavigation() {
+        console.log('Updating navigation...');
         const guestNav = document.getElementById('navLinks');
         const authNav = document.getElementById('authNavLinks');
         
-        if (this.currentUser) {
+        if (this.currentUser && guestNav && authNav) {
             guestNav.classList.add('hidden');
             authNav.classList.remove('hidden');
             
@@ -173,15 +249,19 @@ class AppointmentApp {
                     ? 'dashboard.manageBusinessDesc' 
                     : 'dashboard.manageAppointmentsDesc';
                 dashboardSubtitle.setAttribute('data-key', key);
-                dashboardSubtitle.textContent = t(key);
+                if (typeof t === 'function') {
+                    dashboardSubtitle.textContent = t(key);
+                }
             }
-        } else {
+        } else if (guestNav && authNav) {
             guestNav.classList.remove('hidden');
             authNav.classList.add('hidden');
         }
     }
     
     showPage(pageId) {
+        console.log('Showing page:', pageId);
+        
         // Hide all pages
         document.querySelectorAll('.page').forEach(page => {
             page.classList.remove('active');
@@ -208,10 +288,13 @@ class AppointmentApp {
             
             // Load page-specific data
             this.loadPageData(pageId);
+        } else {
+            console.error('Page not found:', pageId + 'Page');
         }
     }
     
     loadPageData(pageId) {
+        console.log('Loading page data for:', pageId);
         switch (pageId) {
             case 'hours':
                 this.loadBusinessHours();
@@ -887,8 +970,3 @@ class AppointmentApp {
         }
     }
 }
-
-// Initialize the app when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-    window.app = new AppointmentApp();
-});
