@@ -363,19 +363,18 @@ class AppointmentApp {
     }
     
     async loadBusinessHours() {
-        const hoursLoading = document.getElementById('hoursLoading');
-        const hoursError = document.getElementById('hoursError');
-        const hoursContent = document.getElementById('hoursContent');
-        const hoursList = document.getElementById('hoursList');
-        
-        // Show loading
-        hoursLoading.classList.remove('hidden');
-        hoursError.classList.add('hidden');
-        hoursContent.classList.add('hidden');
-        
         try {
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            const hoursLoading = document.getElementById('hoursLoading');
+            const hoursError = document.getElementById('hoursError');
+            const hoursContent = document.getElementById('hoursContent');
+            
+            // Show loading briefly for demo
+            if (hoursLoading) hoursLoading.classList.remove('hidden');
+            if (hoursError) hoursError.classList.add('hidden');
+            if (hoursContent) hoursContent.classList.add('hidden');
+            
+            // Simulate brief loading
+            await new Promise(resolve => setTimeout(resolve, 500));
             
             // Mock business hours data
             const mockHours = [
@@ -421,12 +420,14 @@ class AppointmentApp {
             
             this.renderBusinessHours(mockHours);
             
-            hoursLoading.classList.add('hidden');
-            hoursContent.classList.remove('hidden');
+            if (hoursLoading) hoursLoading.classList.add('hidden');
+            if (hoursContent) hoursContent.classList.remove('hidden');
             
         } catch (error) {
-            hoursLoading.classList.add('hidden');
-            hoursError.classList.remove('hidden');
+            const hoursLoading = document.getElementById('hoursLoading');
+            const hoursError = document.getElementById('hoursError');
+            if (hoursLoading) hoursLoading.classList.add('hidden');
+            if (hoursError) hoursError.classList.remove('hidden');
         }
     }
     
@@ -703,7 +704,15 @@ class AppointmentApp {
     
     loadDashboard() {
         if (!this.currentUser) {
-            this.showPage('login');
+            // For demo purposes, create a demo user if none exists
+            this.currentUser = {
+                id: 1,
+                email: 'demo@example.com',
+                role: 'client',
+                firstName: 'משתמש',
+                lastName: 'דמו'
+            };
+            this.updateNavigation();
             return;
         }
         
